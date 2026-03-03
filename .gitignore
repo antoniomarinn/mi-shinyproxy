@@ -1,0 +1,23 @@
+# Java y Maven
+*.jar
+*.war
+target/
+.mvn/
+
+# Logs (Muy importante para no llenar el repo con logs de ejecución)
+*.log
+shinyproxy.log
+
+# Docker
+.docker/
+# Si guardas datos de apps persistentes
+Operator/data/
+
+# Sistema y Editores
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Archivos de entorno (si llegas a usar .env)
+.env
