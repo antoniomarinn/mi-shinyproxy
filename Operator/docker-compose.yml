@@ -1,9 +1,12 @@
 services:
   shinyproxy-operator:
     image: mi-shinyproxy
+    ports: 
+      - "8080:8080"
     environment:
       SPO_ORCHESTRATOR: docker
-      SPO_DOCKER_GID: 1234   # <-- docker group id (getent group docker ...)
+      SPO_DOCKER_GID: 998
+      #SPO_DOCKER_GID: 1234   # <-- docker group id (getent group docker ...)
     volumes:
       - ./input:/opt/shinyproxy-docker-operator/input
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -13,8 +16,10 @@ services:
     networks:
       - sp-shared-network
     restart: always
-    user: "1002"             # <-- shinyproxy user id (id -u shinyproxy)
+    user: "1010"
+    #user: "1002"             # <-- shinyproxy user id (id -u shinyproxy)
 
 networks:
   sp-shared-network:
     name: sp-shared-network
+    external: true
