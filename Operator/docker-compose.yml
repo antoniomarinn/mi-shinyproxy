@@ -1,24 +1,24 @@
 services:
   shinyproxy-operator:
-    image: mi-shinyproxy
-    ports: 
-      - "8080:8080"
+    image: openanalytics/shinyproxy-operator:2.3.1
+    container_name: shinyproxy
     environment:
       SPO_ORCHESTRATOR: docker
       SPO_DOCKER_GID: 998
-      #SPO_DOCKER_GID: 1234   # <-- docker group id (getent group docker ...)
+      SPO_IMAGE_PULL_POLICY: IfNotPresent
+      SPO_DOCKER_DATA_DIR: /srv/MG_team/shinyproxy-docker/Operator/data
     volumes:
-      - ./input:/opt/shinyproxy-docker-operator/input
+      - /srv/MG_team/shinyproxy-docker/Operator/input:/opt/shinyproxy-docker-operator/input
+      - /srv/MG_team/shinyproxy-docker/Operator/data:/srv/MG_team/shinyproxy-docker/Operator/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /opt/shinyproxy-docker-operator/data:/opt/shinyproxy-docker-operator/data
     group_add:
-      - 998                 # <-- docker group id again
+      - 998
     networks:
       - sp-shared-network
     restart: always
+    labels:
+      app: shinyproxy-operator
     user: "1010"
-    #user: "1002"             # <-- shinyproxy user id (id -u shinyproxy)
-
 networks:
   sp-shared-network:
     name: sp-shared-network
