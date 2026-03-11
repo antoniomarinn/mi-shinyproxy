@@ -19,6 +19,7 @@ services:
     labels:
       app: shinyproxy-operator
     user: "1010"
+  #portal-visual: image: nginx:alpine container_name: portal-visual ports: - "8000:80" volumes: - /srv/MG_team/shinyproxy-docker/Shinyproxy:/usr/share/nginx/html:ro  networks: - sp-shared-network restart: always
 networks:
   sp-shared-network:
     name: sp-shared-network
