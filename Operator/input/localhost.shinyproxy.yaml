@@ -1,38 +1,54 @@
 proxy:
+  title: Servidor Shinyproxy 
   authentication: simple
   realm-id: localhost
   container-network: sp-shared-network
   docker:
     internal-networking: true
+    
   users:
-    - name: admin
-      password: admin
-      groups: [users]
+    - name: tic
+      password: tic
+      groups: [tic]
+    - name: calidad
+      password: calidad
+      groups: [calidad]
+    - name: comercial
+      password: comercial
+      groups: [comercial]
+    - name: gerencia
+      password: gerencia
+      groups: [gerencia]
+
   specs:
     - id: informes
       display-name: Mis Informes
-      container-image: informes-html:latest
-      container-network: sp-shared-network
+      container-image: app-informes:v1
       port: 80
-      access-groups: [users]
+      access-groups: [tic]
+      container-network: sp-shared-network
+
     - id: app1
-      display-name: App 1
+      display-name: App Calidad 
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app1', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
+      access-groups: [ tic,calidad ]
       container-network: sp-shared-network
-      access-groups: [users]
+
     - id: app2
-      display-name: App 2
+      display-name: App Comercial
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app2', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
+      access-groups: [ tic,comercial ]
       container-network: sp-shared-network
-      access-groups: [users]
+
     - id: app3
-      display-name: App 3
+      display-name: App Gerencia
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app3', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
+      access-groups: [ tic,gerencia ]
       container-network: sp-shared-network
-      access-groups: [users]
+
 server:
   forward-headers-strategy: native
 
