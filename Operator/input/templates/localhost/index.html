@@ -115,12 +115,30 @@
             </div>
 
             <th:block th:each="app: ${ungroupedApps}">
-                <div th:replace="~{index :: app(${app})}"></div>
+                <th:block th:if="${!#strings.startsWith(app.id, 'informe')}">
+                    <div th:replace="~{index :: app(${app})}"></div>
+                </th:block>
             </th:block>
+        </div>
 
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header text-center">Mis Informes</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <th:block th:each="app: ${ungroupedApps}">
+                <th:block th:if="${#strings.startsWith(app.id, 'informe')}">
+                    <div th:replace="~{index :: app(${app})}"></div>
+                </th:block>
+            </th:block>
+        </div>
+
+        <div class="row">
             <th:block th:each="group: ${templateGroups}">
                 <div class="col-xs-12">
-                    <h2 th:text="${group.properties.get('display-name')}"></h2>
+                    <h2 class="page-header text-center" th:text="${group.properties.get('display-name')}"></h2>
                 </div>
                 <th:block th:each="app: ${groupedApps.get(group.id)}">
                     <div th:replace="~{index :: app(${app})}"></div>
