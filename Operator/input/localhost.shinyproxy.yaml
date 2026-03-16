@@ -1,0 +1,89 @@
+proxy:
+  title: Servidor Shinyproxy 
+  authentication: simple
+  realm-id: localhost
+  container-network: sp-shared-network
+  docker:
+    internal-networking: true
+    
+  users:
+    - name: tic
+      password: tic
+      groups: [tic]
+    - name: calidad
+      password: calidad
+      groups: [calidad]
+    - name: comercial
+      password: comercial
+      groups: [comercial]
+    - name: gerencia
+      password: gerencia
+      groups: [gerencia]
+
+  specs:
+    - id: informes1
+      display-name: Informe Principal
+      container-image: app-informes:v3
+      container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/systemd_report_MG.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+      port: 80
+      access-groups: [ tic,calidad ]
+      container-network: sp-shared-network
+      
+    - id: informes2
+      display-name: Informe de Cargas
+      container-image: app-informes:v3
+      container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_cargas.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+      port: 80
+      access-groups: [ tic,comercial ]
+      container-network: sp-shared-network 
+    
+    - id: informes3
+      display-name: Informe de Claims
+      container-image: app-informes:v3
+      container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_claims.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+      port: 80
+      access-groups: [ tic,gerencia ]
+      container-network: sp-shared-network
+      
+    - id: informes4
+      display-name: Informe Platform
+      container-image: app-informes:v3
+      container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_platform.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+      port: 80
+      access-groups: [tic]
+      container-network: sp-shared-network
+    
+    - id: informes5
+      display-name: Informe Rotación
+      container-image: app-informes:v3
+      container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_rotacion.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+      port: 80
+      access-groups: [tic]
+      container-network: sp-shared-network
+      
+    - id: app1
+      display-name: App Calidad 
+      container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app1', host='0.0.0.0', port=3838)"]
+      container-image: shiny-apps:latest
+      access-groups: [ tic,calidad ]
+      container-network: sp-shared-network
+    
+    - id: app2
+      display-name: App Comercial
+      container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app2', host='0.0.0.0', port=3838)"]
+      container-image: shiny-apps:latest
+      access-groups: [ tic,comercial ]
+      container-network: sp-shared-network
+    
+    - id: app3
+      display-name: App Gerencia
+      container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app3', host='0.0.0.0', port=3838)"]
+      container-image: shiny-apps:latest
+      access-groups: [ tic,gerencia ]
+      container-network: sp-shared-network
+   
+server:
+  forward-headers-strategy: native
+
+image: openanalytics/shinyproxy:3.2.3
+fqdn: linuxprod01
