@@ -1,25 +1,3 @@
-<!--
-
-    ShinyProxy
-
-    Copyright (C) 2016-2026 Open Analytics
-
-    ===========================================================================
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the Apache License as published by
-    The Apache Software Foundation, either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Apache License for more details.
-
-    You should have received a copy of the Apache License
-    along with this program.  If not, see <http://www.apache.org/licenses/>
-
--->
 <!DOCTYPE html>
 <html
         xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
@@ -36,10 +14,12 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
+                        
                         <a class="navbar-brand" th:href="@{/}" style="display: flex; align-items: center; padding-top: 10px; padding-bottom: 10px;">
-                            <img src="/assets/logo.png" style="height: 30px; margin-right: 10px;" alt="Logo MG">
+                            <img th:src="@{/assets/logo.jpeg}" style="height: 45px; margin-right: 15px;" alt="Logo MG">
                             <span th:text="${title}"></span>
                         </a>
+                        
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-collapse">
                         <div class="navbar-form navbar-right navbar-buttons">
