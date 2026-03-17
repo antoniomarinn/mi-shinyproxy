@@ -12,14 +12,40 @@ services:
       - /srv/MG_team/shinyproxy-docker/Operator/data:/srv/MG_team/shinyproxy-docker/Operator/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
     group_add:
-      - 998
+      - "998"
     networks:
       - sp-shared-network
     restart: always
     labels:
       app: shinyproxy-operator
     user: "1010"
+  
   #portal-visual: image: nginx:alpine container_name: portal-visual ports: - "8000:80" volumes: - /srv/MG_team/shinyproxy-docker/Shinyproxy:/usr/share/nginx/html:ro  networks: - sp-shared-network restart: always
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: sp-influxdb
+    restart: always
+    environment:
+      - INFLUXDB_DB=shinyproxy_statistics
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb
+    networks:
+      - sp-shared-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sp-grafana
+    restart: always
+    depends_on:
+      - influxdb
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    networks:
+      - sp-shared-network
+
 networks:
   sp-shared-network:
     name: sp-shared-network
