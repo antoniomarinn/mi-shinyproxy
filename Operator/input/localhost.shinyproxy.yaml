@@ -1,4 +1,5 @@
 proxy:
+  usage-stats-url: http://sp-influxdb:8086/write?db=shinyproxy_statistics
   title: Servidor Shinyproxy 
   authentication: simple
   realm-id: localhost
