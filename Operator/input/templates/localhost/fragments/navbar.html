@@ -47,6 +47,7 @@
 
                             <a class="btn btn-primary btn-sm report-issue-btn" role="button" th:if="${isSupportEnabled}">Reportar un error</a>
                             <a class="btn btn-primary btn-sm" role="button" th:href="@{/admin}" th:if="${isAdmin}">Administrador</a>
+                            <a class="btn btn-primary btn-sm" role="button" th:href="@{/admin}" th:if="${isAdmin}">Estadisticas</a>
                             <a class="btn btn-primary btn-sm" role="button" th:href="@{${logoutUrl}}" th:if="${isLoggedIn}">Cerrar sesión</a>
                         </div>
                         <div class="navbar-right" sec:authorize="isAuthenticated()">
