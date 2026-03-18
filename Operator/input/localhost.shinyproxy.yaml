@@ -20,7 +20,7 @@ proxy:
     - name: gerencia
       password: gerencia
       groups: [gerencia]
-
+  admin-groups: [tic]
   specs:
     - id: informes1
       display-name: Informe de Reportes
@@ -82,6 +82,15 @@ proxy:
       container-image: shiny-apps:latest
       access-groups: [ tic,gerencia ]
       container-network: sp-shared-network
+      
+    - id: admin-grafana
+      display-name: ⚙️ Panel de Estadísticas
+      description: Acceso exclusivo para administradores
+      container-image: nginx:alpine
+      port: 80
+      access-users:
+        - tic
+      container-cmd: ["sh", "-c", "echo '<!DOCTYPE html><html><body style=\"background:#2b2b2b; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;\"><a href=\"http://linuxprod01:3000\" target=\"_blank\" style=\"background-color:#E5822B; color:white; padding:20px 40px; text-decoration:none; font-size:24px; border-radius:8px; font-weight:bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3);\">Abrir Grafana</a></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
    
 server:
   forward-headers-strategy: native
