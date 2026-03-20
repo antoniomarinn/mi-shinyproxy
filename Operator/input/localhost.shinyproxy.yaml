@@ -1,6 +1,7 @@
 proxy:
   usage-stats-url: http://sp-influxdb:8086/write?db=shinyproxy_statistics
-  title: Servidor Shinyproxy 
+  title: Servidor Shinyproxy v3
+  template-path: ./templates/localhost
   authentication: simple
   realm-id: localhost
   container-network: sp-shared-network
@@ -84,7 +85,7 @@ proxy:
       container-network: sp-shared-network
       
     - id: admin-grafana
-      display-name: ⚙️ Panel de Estadísticas
+      display-name: Panel de Estadísticas
       description: Acceso exclusivo para administradores
       container-image: nginx:alpine
       port: 80
