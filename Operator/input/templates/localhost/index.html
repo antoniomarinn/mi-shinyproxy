@@ -20,7 +20,6 @@
             font-weight: bold;
         }
 
-        /* Estilo de la Tarjeta */
         .app-card {
             background: white !important;
             border: 1px solid #e1e4e8 !important;
@@ -42,7 +41,7 @@
             text-decoration: none !important;
         }
 
-        /* Contenedor del Logo */
+        /* Contenedor del Logo elegante */
         .app-icon-container {
             height: 90px;
             display: flex;
@@ -53,7 +52,6 @@
 
         .app-logo { max-height: 80px; width: auto; }
 
-        /* Textos */
         .app-card h3 { 
             color: #004a99; 
             margin-top: 10px; 
@@ -92,9 +90,11 @@
         <div class="col-sm-6 col-md-4" th:if="${app != null}">
             <a th:href="@{/app/{id}(id=${app.id})}" class="app-card-link">
                 <div class="app-card">
+                    
                     <div class="app-icon-container">
-                        <img class="navbar-brand" th:src="${logo}" th:if="${logo != null}"/>
+                        <img class="app-logo" th:src="@{/assets/logo.jpeg}" alt="Logo de la App"/>
                     </div>
+                    
                     <h3 th:text="${app.displayName == null} ? ${app.id} : ${app.displayName}"></h3>
                     <p class="app-description" th:if="${app.description != null}" th:utext="${app.description}"></p>
                 </div>
