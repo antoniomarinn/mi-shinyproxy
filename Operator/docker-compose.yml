@@ -1,52 +1,48 @@
 services:
-  shinyproxy-operator:
-    image: openanalytics/shinyproxy-operator:2.3.1
-    container_name: shinyproxy
-    environment:
-      SPO_ORCHESTRATOR: docker
-      SPO_DOCKER_GID: 998
-      SPO_IMAGE_PULL_POLICY: IfNotPresent
-      SPO_DOCKER_DATA_DIR: /srv/MG_team/shinyproxy-docker/Operator/data
+  shinyproxy-dev:
+    image: openanalytics/shinyproxy:3.2.3
+    container_name: shinyproxy-dev-standalone
+    # Mapeamos el puerto interno de Java (8080) al tuyo (8085)
+    ports:
+      - "8085:8080"
     volumes:
-      - /srv/MG_team/shinyproxy-docker/Operator/input:/opt/shinyproxy-docker-operator/input
-      - /srv/MG_team/shinyproxy-docker/Operator/data:/srv/MG_team/shinyproxy-docker/Operator/data
+      # Le pasamos tu archivo YAML
+      - ./input/localhost.shinyproxy.yaml:/opt/shinyproxy/application.yml
+      # Le pasamos tus plantillas
+      - ./input/templates:/opt/shinyproxy/templates
+      # Le damos acceso a Docker para que pueda crear los contenedores de R
       - /var/run/docker.sock:/var/run/docker.sock:ro
     group_add:
       - "998"
     networks:
-      - sp-shared-network
+      - sp-shared-network-dev
     restart: always
-    labels:
-      app: shinyproxy-operator
-    user: "1010"
-  
-  #portal-visual: image: nginx:alpine container_name: portal-visual ports: - "8000:80" volumes: - /srv/MG_team/shinyproxy-docker/Shinyproxy:/usr/share/nginx/html:ro  networks: - sp-shared-network restart: always
 
-  influxdb:
+  influxdb-dev:
     image: influxdb:1.8
-    container_name: sp-influxdb
+    container_name: sp-influxdb-dev
     restart: always
     environment:
-      - INFLUXDB_DB=shinyproxy_statistics
+      - INFLUXDB_DB=shinyproxy_statistics_dev
     volumes:
       - ./influxdb-data:/var/lib/influxdb
     networks:
-      - sp-shared-network
+      - sp-shared-network-dev
 
-  grafana:
+  grafana-dev:
     image: grafana/grafana:latest
-    container_name: sp-grafana
+    container_name: sp-grafana-dev
     restart: always
     depends_on:
-      - influxdb
+      - influxdb-dev
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./grafana-data:/var/lib/grafana
     networks:
-      - sp-shared-network
-    #antonio04marin
+      - sp-shared-network-dev
+
 networks:
-  sp-shared-network:
-    name: sp-shared-network
-    external: true
+  sp-shared-network-dev:
+    name: sp-shared-network-dev
+    driver: bridge

@@ -1,13 +1,16 @@
 proxy:
-  usage-stats-url: http://sp-influxdb:8086/write?db=shinyproxy_statistics
-  title: Servidor Shinyproxy v3
+  title: Servidor Shinyproxy DEV
   template-path: ./templates/localhost
+  usage-stats-url: http://sp-influxdb-dev:8086/write?db=shinyproxy_statistics_dev
   authentication: simple
-  realm-id: localhost
-  container-network: sp-shared-network
+  realm-id: dev-localhost
+  
+  # 1. LA RED A NIVEL GLOBAL (Como en tu PROD)
+  container-network: sp-shared-network-dev
+  
   docker:
     internal-networking: true
-    
+
   users:
     - name: tic
       password: tic
@@ -22,79 +25,82 @@ proxy:
       password: gerencia
       groups: [gerencia]
   admin-groups: [tic]
+
   specs:
     - id: informes1
       display-name: Informe de Reportes
       container-image: app-informes:v3
       container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/systemd_report_MG.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
       port: 80
-      access-groups: [ tic,calidad ]
-      container-network: sp-shared-network
-      
+      access-groups: [tic, calidad]
+      # 2. LA RED EN CADA APP (Como en tu PROD)
+      container-network: sp-shared-network-dev
+
     - id: informes2
       display-name: Informe de Cargas
       container-image: app-informes:v3
       container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_cargas.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
       port: 80
-      access-groups: [ tic,comercial ]
-      container-network: sp-shared-network 
-    
+      access-groups: [tic, comercial]
+      container-network: sp-shared-network-dev
+
     - id: informes3
       display-name: Informe de Claims
       container-image: app-informes:v3
       container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_claims.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
       port: 80
-      access-groups: [ tic,gerencia ]
-      container-network: sp-shared-network
-      
+      access-groups: [tic, gerencia]
+      container-network: sp-shared-network-dev
+
     - id: informes4
       display-name: Informe de Plataformas
       container-image: app-informes:v3
       container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_platform.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
       port: 80
       access-groups: [tic]
-      container-network: sp-shared-network
-    
+      container-network: sp-shared-network-dev
+
     - id: informes5
       display-name: Informe de Rotación
       container-image: app-informes:v3
       container-cmd: ["/bin/sh", "-c", "cp /usr/share/nginx/html/report_rotacion.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
       port: 80
       access-groups: [tic]
-      container-network: sp-shared-network
-      
+      container-network: sp-shared-network-dev
+
     - id: app1
       display-name: App Calidad 
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app1', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
-      access-groups: [ tic,calidad ]
-      container-network: sp-shared-network
-    
+      access-groups: [tic, calidad]
+      container-network: sp-shared-network-dev
+
     - id: app2
       display-name: App Comercial
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app2', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
-      access-groups: [ tic,comercial ]
-      container-network: sp-shared-network
-    
+      access-groups: [tic, comercial]
+      container-network: sp-shared-network-dev
+
     - id: app3
       display-name: App Gerencia
       container-cmd: ["R", "-e", "shiny::runApp('/srv/shiny-server/app3', host='0.0.0.0', port=3838)"]
       container-image: shiny-apps:latest
-      access-groups: [ tic,gerencia ]
-      container-network: sp-shared-network
-      
+      access-groups: [tic, gerencia]
+      container-network: sp-shared-network-dev
+
     - id: admin-grafana
       display-name: Panel de Estadísticas
-      description: Acceso exclusivo para administradores
       container-image: nginx:alpine
       port: 80
-      access-users:
-        - tic
-      container-cmd: ["sh", "-c", "echo '<!DOCTYPE html><html><body style=\"background:#2b2b2b; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;\"><a href=\"http://linuxprod01:3000\" target=\"_blank\" style=\"background-color:#E5822B; color:white; padding:20px 40px; text-decoration:none; font-size:24px; border-radius:8px; font-weight:bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3);\">Abrir Grafana</a></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
-   
+      access-users: [tic]
+      container-network: sp-shared-network-dev
+      container-cmd: ["sh", "-c", "echo '<!DOCTYPE html><html><body style=\"background:#2b2b2b; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;\"><a href=\"http://linuxprod01:3001\" target=\"_blank\" style=\"background-color:#E5822B; color:white; padding:20px 40px; text-decoration:none; font-size:24px; border-radius:8px; font-weight:bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3);\">Abrir Grafana DEV</a></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]
+
+# 3. EL TRUCO DE LA SESIÓN (Aislado de PROD)
 server:
   forward-headers-strategy: native
-
-image: openanalytics/shinyproxy:3.2.3
-fqdn: linuxprod01
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID_DEV
